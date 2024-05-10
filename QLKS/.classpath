@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="QLKS/QuanLyKhachSan/src"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/AbsoluteLayout-RELEASE170.jar"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/KGradientPanel.jar"/>
+	<classpathentry kind="lib" path="QLKS/QuanLyKhachSan/lib/sqljdbc42.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
