@@ -1,18 +1,18 @@
 package ui;
 
-import dao.BookRoomDAO;
-import dao.CustomerDAO;
-import dao.CustomerTypeDAO;
-import dao.EmployeeDAO;
-import dao.OrderDAO;
-import dao.RoomDAO;
-import dao.RoomStatusTypeDAO;
 import entity.BookRoom;
 import entity.Customer;
 import entity.Employee;
 import entity.Order;
 import entity.Room;
 import entity.RoomStatusType;
+import socket.implement.BookRoomClient;
+import socket.implement.CustomerClient;
+import socket.implement.CustomerTypeClient;
+import socket.implement.EmployeeClient;
+import socket.implement.OrderClient;
+import socket.implement.RoomClient;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -41,8 +41,8 @@ import javax.swing.table.TableRowSorter;
 public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
     private Thread thread = new Thread((Runnable) this);
     private String username;
-    RoomDAO roomDAO;
-    RoomStatusTypeDAO roomStatusTypeDAO;
+    RoomClient roomDAO;
+    socket.implement.RoomStatusType roomStatusTypeDAO;
     JButton lblRoom;
     String nameRoom;
     private String idroom;
@@ -52,20 +52,19 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
     List<Room> listRoomDoiLon;
     List<Room> listRoomDon;
     List<BookRoom> listBookRooms;
-    private final CustomerDAO cDAO=new CustomerDAO();
-    private final CustomerTypeDAO ctDAO=new CustomerTypeDAO();
-    private final BookRoomDAO brDAO=new BookRoomDAO();
-    private final RoomDAO rDAO=new RoomDAO();
-    private final EmployeeDAO eDAO=new EmployeeDAO();
-    private final RoomStatusTypeDAO rstDAO=new RoomStatusTypeDAO();
+    private final CustomerClient cDAO=new CustomerClient();
+    private final CustomerTypeClient ctDAO=new CustomerTypeClient();
+    private final BookRoomClient brDAO=new BookRoomClient();
+    private final RoomClient rDAO=new RoomClient();
+    private final EmployeeClient eDAO=new EmployeeClient();
     private DefaultTableModel dtm;
-    private final OrderDAO oDAO=new OrderDAO();
+    private final OrderClient oDAO=new OrderClient();
 
     public GD_DonDat(String user) {
         username=user;
         thread.start();
-        roomDAO=new RoomDAO();
-        roomStatusTypeDAO =new RoomStatusTypeDAO();
+        roomDAO=new RoomClient();
+        roomStatusTypeDAO =new socket.implement.RoomStatusType();
         
         this.setRootPaneCheckingEnabled(false);
         javax.swing.plaf.InternalFrameUI ui
@@ -654,17 +653,17 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
             JOptionPane.showMessageDialog(null, "Hãy chọn phòng cần duyệt!");
         }else{
             ArrayList<BookRoom> listBr=new ArrayList<>();
-            BookRoom br=brDAO.getBookRoomByID(tblDDP.getValueAt(index, 0).toString());
+            BookRoom br=brDAO.getById(tblDDP.getValueAt(index, 0).toString());
             listBr.add(br);
-            Employee e=eDAO.findEmpID(username);
+            Employee e=eDAO.getById(username);
             String status="Chưa thanh toán";
             Order order=new Order(maTuSinhHoaDon(), null, null, listBr, e,status);
             if(oDAO.add(order)){
-                Room r=rDAO.findRoomById(br.getRoom().getRoomID());
-                RoomStatusType rst=rstDAO.finRoomStatusTypeById("LTTP002");
+                Room r=rDAO.getById(br.getRoom().getRoomID());
+                RoomStatusType rst= new RoomStatusType();
                 r.setRoomStatusType(rst);
                 listBr.get(0).setStatus("Đã mở phòng");
-                brDAO.updateBookRoom(listBr.get(0));
+                brDAO.update(listBr.get(0));
                 loadDataToTable();
                 JOptionPane.showMessageDialog(null, "Đặt phòng thành công!");
             }
@@ -713,12 +712,12 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
             
             if (JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn hủy căn phòng này?", "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 {
-                    BookRoom br=brDAO.getBookRoomByID(tblDDP.getValueAt(index, 0).toString());
-                    if(brDAO.deleteBookRoom(br.getBookRoomID())){
-                           Room room=rDAO.findRoomById(br.getRoom().getRoomID());
-                           RoomStatusType rst=rstDAO.finRoomStatusTypeById("LTTP001");
+                    BookRoom br=brDAO.getById(tblDDP.getValueAt(index, 0).toString());
+                    if(brDAO.delete(br.getBookRoomID())){
+                           Room room=rDAO.getById(br.getRoom().getRoomID());
+                           RoomStatusType rst=new RoomStatusType();
                            room.setRoomStatusType(rst);
-                           rDAO.updateRoom(room);
+                           rDAO.update(room);
                            
                            loadDataToTable();
                            createRoom();
@@ -884,7 +883,7 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
 // tráº¡ng thÃ¡i phÃ²ng
     private void createStatusRoom(String idTrangThai, Color color, JPanel pnlRom) {
         TitledBorder titledBorder = BorderFactory.createTitledBorder(
-                roomStatusTypeDAO.finRoomStatusTypeById(idTrangThai).getRoomStatusTypeName().toUpperCase());
+                "asd".toUpperCase());
         titledBorder.setTitleColor(color);
         titledBorder.setTitleFont(new Font("Segoe UI", Font.PLAIN, 10));
         pnlRom.setBorder(titledBorder);
@@ -893,7 +892,7 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
 
     private void createNameRoom(String idPhong, JPanel pnlRom, Color colorBackground, Room room) {
         lblRoom = new JButton();
-        lblRoom.setText(roomDAO.findRoomById(idPhong).getRoomName());
+        lblRoom.setText(roomDAO.getById(idPhong).getRoomName());
         lblRoom.setOpaque(true);
         lblRoom.setBackground(colorBackground);
         lblRoom.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -1002,9 +1001,9 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String ngayCheckIn = sdf.format(txtNgayCheckIn.getDate());
                         
-                        BookRoom b=new BookRoom(maTuSinhDonDat(), ngaydat, getGioCheckIn(), ngayCheckIn, txtGio.getText(), c, e, rDAO.findRoomById(idroom),"ChÆ°a má»Ÿ phÃ²ng");
+                        BookRoom b=new BookRoom(maTuSinhDonDat(), ngaydat, getGioCheckIn(), ngayCheckIn, txtGio.getText(), c, e, rDAO.getById(idroom),"ChÆ°a má»Ÿ phÃ²ng");
                         if(brDAO.add(b)){
-                            Room room=rDAO.findRoomById(idroom);
+                            Room room=rDAO.getById(idroom);
                             RoomStatusType rst=rstDAO.finRoomStatusTypeById("LTTP003");
                             room.setRoomStatusType(rst);
                             rDAO.updateRoom(room);
@@ -1022,10 +1021,10 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
                         Customer c=cDAO.getCustomerByCCCD(txtCCCD.getText());
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String ngayCheckIn = sdf.format(txtNgayCheckIn.getDate());
-                        BookRoom b=new BookRoom(maTuSinhDonDat(), ngaydat, txtGio.getText(), ngayCheckIn,getGioCheckIn(), c, e, rDAO.findRoomById(idroom),"ChÆ°a má»Ÿ phÃ²ng");
+                        BookRoom b=new BookRoom(maTuSinhDonDat(), ngaydat, txtGio.getText(), ngayCheckIn,getGioCheckIn(), c, e, rDAO.getById(idroom),"ChÆ°a má»Ÿ phÃ²ng");
                         
                         if(brDAO.add(b)){
-                            Room room=rDAO.findRoomById(idroom);
+                            Room room=rDAO.getById(idroom);
                             RoomStatusType rst=rstDAO.finRoomStatusTypeById("LTTP003");
                             room.setRoomStatusType(rst);
                             rDAO.updateRoom(room);
@@ -1081,7 +1080,7 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
         int i = 0, j = 1;
         int[] dem = new int[999];
         String id;
-        for (BookRoom br : brDAO.getAlLBookRooms()) {
+        for (BookRoom br : brDAO.getAll()) {
             id = br.getBookRoomID();
             tachMa = Integer.parseInt(id.substring(3, 6));
             dem[i] = tachMa;
@@ -1192,7 +1191,7 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
 
     private void loadDataToTable() {
         dtm.setRowCount(0);
-        listBookRooms=brDAO.getAlLBookRoomsWithStatus();
+        listBookRooms=brDAO.getBookRoomsWithStatus();
         if(listBookRooms!=null){
         for (BookRoom bookRoom : listBookRooms) {
             dtm.addRow(new String[]{bookRoom.getBookRoomID(), bookRoom.getRoom().getRoomName(),

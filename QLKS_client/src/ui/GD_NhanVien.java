@@ -38,18 +38,15 @@ public class GD_NhanVien extends javax.swing.JFrame {
     public GD_NhanVien(String user,Component c) {
         username=user;
         component=c;
-        this.setUndecorated(true);
         this.setResizable(true);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
-
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle("Quản lý khách sạn");
         initComponents();
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        int xsize = (int) tk.getScreenSize().getWidth();
-        int ysize = (int) tk.getScreenSize().getHeight();
-        this.setSize(xsize, ysize);
+        this.setLocationRelativeTo(null);
+        // set size max
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
         pnlGioiThieu.setkEndColor(new java.awt.Color(185, 237, 221));
         pnlGioiThieu.setkStartColor(new java.awt.Color(185, 237, 221));
         lblGioiThieu.setForeground(new Color(36, 89, 83));
@@ -457,12 +454,11 @@ private void doiMauPnl(){
 
     private void pnlDonDatMousePressed(java.awt.event.MouseEvent evt) { 
         doiMauPnl();
-        
+        System.out.println("Don dat");
         pnlDonDat.setkEndColor(new java.awt.Color(185,237,221));
         pnlDonDat.setkStartColor(new java.awt.Color(185,237,221));
         lblDonDat.setForeground(new Color(36,89,83)); 
-        
-        
+        System.out.println("Don dat2");
         
         GD_DonDat gdDonDat=new GD_DonDat(username);
         openComponent(gdDonDat);

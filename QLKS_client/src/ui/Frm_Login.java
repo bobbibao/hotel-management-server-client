@@ -2,21 +2,24 @@ package ui;
 
 import entity.Employee;
 import socket.SocketClient;
+import socket.implement.AccountClient;
+import socket.implement.EmployeeClient;
+
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 public class Frm_Login extends javax.swing.JFrame {
 
-    private static SocketClient socketClient;
 	private final Frm_Login comp;
+    private AccountClient accountClient = new AccountClient();
+    private EmployeeClient employeeClient = new EmployeeClient();
  
-    public Frm_Login() {
+    public Frm_Login(){
         initComponents();
         comp=this;
-        
     }
  
-    @SuppressWarnings("unchecked") 
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -46,6 +49,7 @@ public class Frm_Login extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         kGradientPanel3.setForeground(new java.awt.Color(255, 255, 255));
+        
         kGradientPanel3.setkEndColor(new java.awt.Color(86, 157, 170));
         kGradientPanel3.setkGradientFocus(2000);
         kGradientPanel3.setkStartColor(new java.awt.Color(135, 203, 185));
@@ -141,7 +145,12 @@ public class Frm_Login extends javax.swing.JFrame {
         btnDangNhap.setFocusPainted(false);
         btnDangNhap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnDangNhapMouseClicked(evt);
+                try {
+                    btnDangNhapMouseClicked(evt);
+                } catch (ClassNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -237,64 +246,37 @@ public class Frm_Login extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Bạn hãy liên hệ lại với nhân viên quầy để được cấp lại mật khẩu");
     }
 
-    private void btnDangNhapMouseClicked(java.awt.event.MouseEvent evt) {
+    private void btnDangNhapMouseClicked(java.awt.event.MouseEvent evt) throws ClassNotFoundException {
+        
         String username=txtTenDN.getText();
         String password=String.valueOf(txtMatKhau.getPassword());
         if(username.equals("") || password.equals("")){
             JOptionPane.showMessageDialog(null, "Hãy nhập đúng thông tin đăng nhập!");
         }else{
             System.out.println("username: " + username + ", password: " + password);
-            if(socketClient.login(username, password)) {
+            if(accountClient.findPass(username).equals(password)) {
                 Employee emp;
-                try {
-                    emp = socketClient.getEmployee(username);
-                    System.out.println("emp: " + emp);
-                    if(emp.getEmployeeType().getEmployeeTypeID().equals("LNV001")){
-                        this.setVisible(false);
-                        GD_QuanLy gdql = new GD_QuanLy(username, comp);
-                        gdql.setVisible(true);
-                    } else {
-                        this.setVisible(false);
-                        GD_NhanVien gdnv = new GD_NhanVien(username, comp);
-                        gdnv.setVisible(true);
-                    }
-                } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                emp = employeeClient.getById(username);
+                System.out.println("emp: " + emp);
+                if(emp.getEmployeeType().getEmployeeTypeID().equals("LNV001")){
+                    this.setVisible(false);
+                    GD_QuanLy gdql = new GD_QuanLy(username, comp);
+                    gdql.setVisible(true);
+                } else {
+                    this.setVisible(false);
+                    GD_NhanVien gdnv = new GD_NhanVien(username, comp);
+                    gdnv.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Mật khẩu không hợp lệ");
             }
-//	        if(dao_Acc.findPass(username).equals(matKhau)){
-//	            
-//	            Employee emp;
-//	           
-//	            emp=dao_Emp.findEmpID(username);
-//	            if(emp.getEmployeeType().getEmployeeTypeID().equals("LNV001")){
-//	                this.setVisible(false);
-//	                GD_QuanLy gdql=new GD_QuanLy(username, comp);
-//	                gdql.setVisible(true);
-//	                
-//	            }else{
-//	                
-//	                    this.setVisible(false);
-//	                        GD_NhanVien gdnv = new GD_NhanVien(username, comp);
-//	                        gdnv.setVisible(true);
-//	            
-//	            }
-//	            
-//	        }
-//	        else{
-//	            JOptionPane.showMessageDialog(null, "Mật khẩu không hợp lệ");
-//	        }
-    
         }
     }
     public static void main(String args[]) {
-    	socketClient = new SocketClient("127.0.0.1", 31000);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-            	Frm_Login gd = new Frm_Login();
+            	Frm_Login gd;
+                gd = new Frm_Login();
                 gd.setDefaultCloseOperation(HIDE_ON_CLOSE);
                 gd.setLocationRelativeTo(null);
                 gd.setVisible(true);

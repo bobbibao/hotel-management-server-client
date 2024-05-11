@@ -1,7 +1,8 @@
 
 package ui;
-import dao.*;
 import entity.*;
+import socket.SocketClient;
+
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,15 +10,15 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import regex.RegexHelper;
 
 public class GD_DichVu_QuanLy extends javax.swing.JInternalFrame {
     private DefaultTableModel model;
        
     private ServiceDAO serviceD;
     private EmployeeDAO empD;
-       
-    private RegexHelper helper;
+
+    private static SocketClient socketClient = new SocketClient("localhost", 31000);
+
     public GD_DichVu_QuanLy() {
         this.setRootPaneCheckingEnabled(false);
         javax.swing.plaf.InternalFrameUI ui

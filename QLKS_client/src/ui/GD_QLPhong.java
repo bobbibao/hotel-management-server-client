@@ -1,28 +1,34 @@
 package ui;
 
-import dao.RoomDAO;
 import entity.Room;
 import entity.RoomStatusType;
 import entity.RoomType;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.JOptionPane;
-import regex.RegexHelper;
+import socket.SocketClient;
+import socket.implement.RoomClient;
 
 
 public class GD_QLPhong extends javax.swing.JInternalFrame {
 
     private int Rows; 
+    private RoomClient roomClient = new RoomClient();
     ArrayList<UI_Phong> ds_UIPhong = null;
     List<Room> ds = null; 
-    
+    private static SocketClient socketClient = new SocketClient("localhost", 31000);
+
     public void loadData() {
-        ds = new RoomDAO().getAllRooms(); 
+        ds = roomClient.getAll();
+        System.out.println(ds.size());
         Collections.sort(ds, new Comparator<Room>() {
             @Override
             public int compare(Room room1, Room room2) {
@@ -52,7 +58,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
                     txtTenPhong.setText(room.getRoomName()); 
                     String type = room.getRoomType().getRoomTypeID(); 
                     String status = room.getRoomStatusType().getRoomStatusTypeID(); 
-                    txtMoTa.setText(room.getDescribe());
+                    txtMoTa.setText(room.getDescription());
                     txtGia.setText(room.getRoomType().getPrice() + "");
                     if(type.equals("LP001")){
                         cbbLoaiPhong.setSelectedIndex(0);
@@ -105,7 +111,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
             return false;
         } else {
             String thongBao = ""; 
-            if( !RegexHelper.regexGia(txtGia.getText()) )
+            if(txtGia.getText().isEmpty() )
                 thongBao += "*Giá tiền không hợp lệ\n"; 
             if(thongBao.isEmpty()) 
                 return true; 
@@ -124,7 +130,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
         jScrollPane2.getVerticalScrollBar().setUnitIncrement(16);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
 
     private void initComponents() {
 
@@ -618,7 +624,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
         if(luaChon==0) {
             for( UI_Phong u : ds_UIPhong ) {
                 if( u.isSelect() ) 
-                    new RoomDAO().deleteRoom(u.getRoom().getRoomID());
+                    new RoomClient().delete(u.getRoom().getRoomID());
             }
         }
         loadData();
@@ -629,7 +635,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
     }
 
     private void btnThemMoiMouseReleased(java.awt.event.MouseEvent evt) {
-        txtMaPhong.setText(new RoomDAO().getMaPhong()); 
+        txtMaPhong.setText(new RoomClient().getMaPhong()); 
         cbbTrangThai.setSelectedItem("Bảo trì");
         txtTenPhong.setText( "Phòng "+ txtMaPhong.getText()); 
         btnLuu.setText("Lưu");
@@ -685,7 +691,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
                 Room phong = new Room(); 
                 phong.setRoomID(txtMaPhong.getText());
                 phong.setRoomName(txtTenPhong.getText());
-                phong.setDescribe(txtMoTa.getText());
+                phong.setDescription(txtMoTa.getText());
 
                 String type = cbbLoaiPhong.getSelectedItem()+""; 
                 String status = cbbTrangThai.getSelectedItem()+""; 
@@ -708,9 +714,9 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
                 phong.setRoomType(new RoomType(IDtype, type, price));
 
                 if(btnLuu.getText().equals("Lưu"))
-                    new RoomDAO().SaveRoom(phong); 
+                    new RoomClient().add(phong); 
                 else 
-                    new RoomDAO().updateRoom(phong); 
+                    new RoomClient().update(phong); 
 
                 txtMaPhong.setText("");
                 txtTenPhong.setText("");

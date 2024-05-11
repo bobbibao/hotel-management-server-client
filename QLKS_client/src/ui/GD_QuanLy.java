@@ -1,6 +1,7 @@
 package ui;
 
-import dao.EmployeeDAO;
+import socket.SocketClient;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -14,17 +15,17 @@ public class GD_QuanLy extends javax.swing.JFrame {
     private static String username;
     private static Component component;
     private entity.Employee e;
-    private dao.EmployeeDAO eD;
+    private static SocketClient socketClient = new SocketClient("localhost", 31000);
 
     public GD_QuanLy(String _username, Component c) {
         component=c;
         username=_username;
         this.setUndecorated(true);
         this.setResizable(true);
-
         initComponents();
         setCursorForPanelÌ£();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
         
         
         pnlGioiThieu.setkEndColor(new java.awt.Color(185, 237, 221));
@@ -33,8 +34,12 @@ public class GD_QuanLy extends javax.swing.JFrame {
         
         GD_GioiThieu frGioiThieu = new GD_GioiThieu(username);
         openComponent(frGioiThieu);
-        eD = new EmployeeDAO();
-        e = eD.findEmpID(_username);
+        try {
+            e = socketClient.getEmployee(_username);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         lblTen.setText(e.getEmployeeName());
         lblChucVu.setText(e.getEmployeeType().getEmployeeTypeName());
         
@@ -510,7 +515,7 @@ public class GD_QuanLy extends javax.swing.JFrame {
 
     private void pnlPhongMouseClicked(java.awt.event.MouseEvent evt) { 
         doiMauPnl();
-            
+        
         pnlPhong.setkEndColor(new Color(185, 237, 221));
         pnlPhong.setkStartColor(new Color(185, 237, 221));
         lblPhong.setForeground(new Color(36, 89, 83));
