@@ -1,6 +1,5 @@
 package ui;
 
-import dao.AccountDAO;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -10,9 +9,11 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import dao2.AccountDAO;
+
 public class GD_TaiKhoan extends javax.swing.JInternalFrame {
     private String username;
-    private dao.AccountDAO aD ;
+    private dao2.AccountDAO aD ;
     private DefaultTableModel modelTaiKhoan;
     public GD_TaiKhoan(String _username) {
         this.setRootPaneCheckingEnabled(false);

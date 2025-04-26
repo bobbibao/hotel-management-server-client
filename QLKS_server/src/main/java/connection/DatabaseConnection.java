@@ -15,7 +15,7 @@ public class DatabaseConnection {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         String connectionUrl = "jdbc:sqlserver://localhost:1433;databasename=QLKS"; 
         String user = "sa";
-        String pass = "dockerStrongPwd123";
+        String pass = "12345";
         Connection con = DriverManager.getConnection(connectionUrl,user,pass);
         return con;
     }

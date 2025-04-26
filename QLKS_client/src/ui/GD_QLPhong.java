@@ -686,7 +686,6 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
     
     private void btnLuuMouseReleased(java.awt.event.MouseEvent evt) { 
         
-        if(checkData()) {
             try {
                 Room phong = new Room(); 
                 phong.setRoomID(txtMaPhong.getText());
@@ -707,11 +706,11 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
                 else if(status.equals("Bảo trì")) IDstatus = "LTTP004"; 
                 else if(status.equals("Dọn dẹp")) IDstatus = "LTTP005"; 
 
-
                 double price = Double.parseDouble(txtGia.getText()); 
 
                 phong.setRoomStatusType(new RoomStatusType(IDstatus, status));
                 phong.setRoomType(new RoomType(IDtype, type, price));
+                System.err.println("phong" + phong);
 
                 if(btnLuu.getText().equals("Lưu"))
                     new RoomClient().add(phong); 
@@ -727,7 +726,7 @@ public class GD_QLPhong extends javax.swing.JInternalFrame {
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage());
             }
-        }
+        
     } 
 
     private void btnXoaPhongActionPerformed(java.awt.event.ActionEvent evt) { 

@@ -1,11 +1,6 @@
 package ui;
 
 
-import dao.AccountDAO;
-import dao.CustomerDAO;
-import dao.CustomerTypeDAO;
-import dao.EmployeeDAO;
-import dao.EmployeeTypeDAO;
 import entity.Account;
 import entity.Customer;
 import entity.Employee;
@@ -20,7 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import regex.RegexHelper;
+
+import dao.AccountDAO;
+import dao.CustomerDAO;
+import dao.CustomerTypeDAO;
+import dao.EmployeeDAO;
+import dao.EmployeeTypeDAO;
 
 public class GD_QLKhachHang extends javax.swing.JInternalFrame {
       public static DefaultTableModel modelKhachHang;

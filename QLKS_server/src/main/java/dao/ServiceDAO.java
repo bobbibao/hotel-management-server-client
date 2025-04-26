@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dao.ServiceDAO;
+
 public class ServiceDAO {
     
     public List<entity.Service> getAllService() throws ClassNotFoundException, SQLException
