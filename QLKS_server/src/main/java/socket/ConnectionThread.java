@@ -7,12 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import dao.AccountDAO;
-import dao.BookRoomDAO;
-import dao.CustomerDAO;
-import dao.EmployeeDAO;
-import dao.RoomDAO;
-import dao.RoomStatusTypeDAO;
+import dao3.AccountDAO;
+import dao3.BookRoomDAO;
+import dao3.CustomerDAO;
+import dao3.EmployeeDAO;
+import dao3.RoomDAO;
+import dao3.RoomStatusTypeDAO;
 import entity.Customer;
 import entity.Employee;
 import entity.Room;
@@ -57,7 +57,8 @@ class ConnectionThread extends Thread {
             String username = null;
             String password = null;
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true, java.nio.charset.StandardCharsets.UTF_8);
                 String command = reader.readLine();
                 System.out.println("server: command: " + command);
                 if (command.equals("findPass")) {
@@ -154,36 +155,52 @@ class ConnectionThread extends Thread {
                     connection.send(dao_Room.getMaPhong());
                 }
 
-                if(command.equals("addRoom")){
-                    System.out.println("server: addRoom");
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                    Room room = (Room) in.readObject();
-                    System.out.println("sdasd" + room);
-                    boolean result = dao_Room.saveRoom(room);
-                    connection.sendBoolean(result);
-	                    // PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-	                    // writer.println("addRoom");
-	                    // System.out.println("server: addRoom");
-	                    // if (result) {
-	                    //     writer.println("addRoom");
-	                    //     System.out.println("server: addRoom");
-	                    //     // Notify all other clients
-	                    //     for (ConnectionThread client : ConnectionThread.this.socketServer.getConnections()) { 
-	                    //         if (client != this) { // Don't send notification to the client that added the room
-	                    //             try (PrintWriter clientWriter = new PrintWriter(client.getSocket().getOutputStream(), true)) {
-	                    //                 clientWriter.println("roomAdded");
-	                    //             }
-	                    //         }
-	                    //     }
-	                    // }
-                    
+                if (command.equals("add_room")) {
+                    System.out.println("server: add_room");
+                    try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                        Room room = (Room) in.readObject(); // Nhận đối tượng Room từ client
+                        System.out.println("Received room object: " + room);
+                
+                        boolean result = dao_Room.saveRoom(room); // Lưu phòng vào cơ sở dữ liệu
+                        System.out.println("Save room result: " + result);
+                        connection.sendBoolean(result); // Gửi phản hồi cho client
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println("Error processing add_room command: " + e.getMessage());
+                        e.printStackTrace();
+                        connection.sendBoolean(false); // Gửi phản hồi thất bại
+                    }
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                if (command.equals("update_room")) {
+                    System.out.println("server: update_room");
+                    try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                        Room room = (Room) in.readObject(); // Receive the updated Room object
+                        System.out.println("Updating room: " + room);
+                
+                        dao_Room.updateRoom(room); // Update the room in the database
+                        connection.sendBoolean(true); // Notify the client of success
+                        System.out.println("Room updated successfully.");
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println("Error processing update_room command: " + e.getMessage());
+                        e.printStackTrace();
+                        connection.sendBoolean(false); // Notify the client of failure
+                    }
+                }
+                
+                if (command.equals("delete_room")) {
+                    System.out.println("server: delete_room");
+                    try {
+                        String roomId = reader.readLine(); // Read the room ID to delete
+                        System.out.println("Deleting room with ID: " + roomId);
+                
+                        dao_Room.deleteRoom(roomId); // Delete the room from the database
+                        connection.sendBoolean(true); // Notify the client of success
+                        System.out.println("Room deleted successfully.");
+                    } catch (IOException e) {
+                        System.err.println("Error processing delete_room command: " + e.getMessage());
+                        e.printStackTrace();
+                        connection.sendBoolean(false); // Notify the client of failure
+                    }
+                }
             } catch (Exception e) {
 				e.printStackTrace();
 			}

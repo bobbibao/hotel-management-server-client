@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="lib/KGradientPanel.jar"/>
 	<classpathentry kind="lib" path="lib/entity.jar"/>
+	<classpathentry kind="lib" path="lib/dao.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

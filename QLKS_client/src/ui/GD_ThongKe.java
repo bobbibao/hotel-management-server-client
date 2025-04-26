@@ -1,8 +1,5 @@
 package ui;
 
-import dao.BookRoomDAO;
-import dao.OrderDAO;
-import dao.ServiceDetailDAO;
 import entity.BookRoom;
 import entity.Order;
 import entity.ServiceDetail;
@@ -25,6 +22,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.util.PublicCloneable;
+
+import dao2.BookRoomDAO;
+import dao2.OrderDAO;
+import dao2.ServiceDetailDAO;
 
 public class GD_ThongKe extends javax.swing.JInternalFrame {
     private final OrderDAO odDAO = new OrderDAO();

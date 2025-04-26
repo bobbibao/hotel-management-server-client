@@ -1,14 +1,15 @@
 package ui;
 
 
-import dao.AccountDAO;
 import javax.swing.JOptionPane;
+
+import dao2.AccountDAO;
 
 public class GD_DoiMatKhau extends javax.swing.JFrame {
 
     String username;
 
-    private dao.AccountDAO aD;
+    private dao2.AccountDAO aD;
     public GD_DoiMatKhau(String _username) {
         username = _username;
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

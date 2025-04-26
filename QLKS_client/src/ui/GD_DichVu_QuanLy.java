@@ -11,6 +11,9 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import dao.EmployeeDAO;
+import dao.ServiceDAO;
+
 public class GD_DichVu_QuanLy extends javax.swing.JInternalFrame {
     private DefaultTableModel model;
        
@@ -28,8 +31,7 @@ public class GD_DichVu_QuanLy extends javax.swing.JInternalFrame {
         initComponents();
         model = new DefaultTableModel();
         serviceD = new ServiceDAO();
-        empD = new EmployeeDAO();
-        helper = new RegexHelper();
+        // helper = new RegexHelper();
         model = (DefaultTableModel) tbService.getModel();
         loadDataToTBService();        
     }
@@ -65,16 +67,17 @@ public class GD_DichVu_QuanLy extends javax.swing.JInternalFrame {
         else
         {
             String thongBao="";
-            if (!helper.regexPriceService(priceTF.getText().trim()))
-                thongBao+="*Giá phải là số và lớn hơn 0!\n";
-            if(!helper.regexSoLuongTon(quantityTF.getText().trim()))
-                thongBao+="*Số lượng phải là số\n";
-            if (thongBao.isEmpty())
-                return true;
-            else{
-                JOptionPane.showMessageDialog(this, thongBao);
-                return false;
-            }
+            // if (!helper.regexPriceService(priceTF.getText().trim()))
+            //     thongBao+="*Giá phải là số và lớn hơn 0!\n";
+            // if(!helper.regexSoLuongTon(quantityTF.getText().trim()))
+            //     thongBao+="*Số lượng phải là số\n";
+            // if (thongBao.isEmpty())
+            //     return true;
+            // else{
+            //     JOptionPane.showMessageDialog(this, thongBao);
+            //     return false;
+            // }
+            return false;
         }
     }
     

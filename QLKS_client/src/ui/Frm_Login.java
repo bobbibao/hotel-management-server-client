@@ -11,6 +11,10 @@ import javax.swing.JOptionPane;
 
 public class Frm_Login extends javax.swing.JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final Frm_Login comp;
     private AccountClient accountClient = new AccountClient();
     private EmployeeClient employeeClient = new EmployeeClient();
@@ -21,7 +25,6 @@ public class Frm_Login extends javax.swing.JFrame {
     }
  
     private void initComponents() {
-
         jPanel1 = new javax.swing.JPanel();
         kGradientPanel3 = new keeptoo.KGradientPanel();
         jLabel7 = new javax.swing.JLabel();

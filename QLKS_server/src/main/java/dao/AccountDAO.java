@@ -1,84 +1,134 @@
+
 package dao;
 
+import connection.DatabaseConnection;
+import dao.AccountDAO;
 import entity.Account;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import entity.Employee;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AccountDAO {
-    private final EntityManager entityManager;
+       public List<Account> getAllListAccount()
+       {
+           List<Account> list = new ArrayList<>();
+           try(Connection con = connection.DatabaseConnection.opConnection();
+                   PreparedStatement pstmt = con.prepareStatement("SELECT * FROM Account"))
+           {
+               try(ResultSet rs = pstmt.executeQuery())
+               {
+                   while(rs.next())
+                   {
+                       String user = rs.getString("userName");
+                       String pass = rs.getString("password");
+                       
+                       Account acc = new Account(user, pass);
+                       list.add(acc);
+                   }
+                   return list;
+               }
+           } catch (SQLException ex) {
+               Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+           }
+           return null;
+       }
+       public Account getAccountById(String id) {
+        try (Connection conn = DatabaseConnection.opConnection();
+                PreparedStatement pstmt = conn.prepareStatement("select * from Account where username = ?")) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {  
 
-    public AccountDAO(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    public List<Account> getAllListAccount() {
-        return entityManager.createQuery("SELECT a FROM Account a", Account.class).getResultList();
-    }
-
-    public Account getAccountById(String id) {
-        return entityManager.find(Account.class, id);
-    }
-
-    public String findPass(String userName) {
-        Account account = entityManager.find(Account.class, userName);
-        System.out.println(account);
-        return account != null ? account.getPassword() : null;
-    }
-
-    public boolean insertAccount(Account acc) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            entityManager.persist(acc);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean update(String pass, String id) {
-        Account account = entityManager.find(Account.class, id);
-        if (account != null) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                account.setPassword(pass);
-                entityManager.merge(account);
-                transaction.commit();
-                return true;
-            } catch (Exception e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
+                    Account acc = new Account(rs.getString("username"), rs.getString("password"));
+                    return acc;
                 }
+            } catch (Exception e) {
+                System.err.println("getAccountById(): get data fail");
                 e.printStackTrace();
-                return false;
             }
+        } catch (Exception e) {
+            System.err.println("getAccountById(): connect db fail");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+       public String findPass(String userName){
+       String password = null;
+       try (Connection con = DatabaseConnection.opConnection();
+               PreparedStatement pts = con.prepareStatement("Select password from Account where userName = ?")){
+           pts.setString(1, userName);
+           ResultSet rs = pts.executeQuery();
+           
+           while(rs.next()){
+               password = rs.getString("password");
+           }
+           return password;
+       } catch (Exception e) {
+           
+       }
+       return null;
+   }
+      
+   public boolean insertAccount(Account acc)
+    {
+        try(
+                Connection con = connection.DatabaseConnection.opConnection();
+                java.sql.PreparedStatement pts = con.prepareStatement("INSERT INTO Account VALUES (?,?)");
+            )
+        {
+            pts.setString(1, acc.getUserName());
+            pts.setString(2, acc.getPassword());
+            
+            return pts.executeUpdate() > 0;
+        }
+        catch(Exception e)
+        {
+            System.err.println("add(): connectDB fail!");
+            e.printStackTrace();
         }
         return false;
     }
-
-    public boolean delete(Account acc) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            Account account = entityManager.find(Account.class, acc.getUserName());
-            if (account != null) {
-                entityManager.remove(account);
-            }
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
+   
+   public boolean update(String pass,String id)
+    {
+        try(
+                Connection con = connection.DatabaseConnection.opConnection();
+                java.sql.PreparedStatement pts = con.prepareStatement("UPDATE Account SET password = ? WHERE userName = ? ");
+            )
+        {
+            pts.setString(2, id);
+            pts.setString(1, pass);
+            
+            return pts.executeUpdate() > 0;
         }
+        catch(Exception e)
+        {
+            System.err.println("update(): connectDB fail!");
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean delete(Account acc) {
+        try(
+            Connection conn = connection.DatabaseConnection.opConnection();  
+                java.sql.PreparedStatement pts = conn.prepareStatement("DELETE FROM Account WHERE userName=?");)
+            {         
+                pts.setString(1, acc.getUserName());
+                return pts.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.err.println("delete(): connect db fail");
+            e.printStackTrace();
+        }
+        return false;
     }
 }

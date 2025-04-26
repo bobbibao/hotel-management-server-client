@@ -2,14 +2,14 @@
 package dao;
 
 import connection.DatabaseConnection;
+import dao.BookRoomDAO;
+import dao.EmployeeDAO;
+import dao.OrderDAO;
 import entity.BookRoom;
 import entity.Customer;
 import entity.Employee;
 import entity.Order;
 import entity.Room;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Persistence;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;                                    
 public class OrderDAO {
-	private final EntityManager entityManager = Persistence.createEntityManagerFactory(null).createEntityManager();
-    private final BookRoomDAO brDAO = new BookRoomDAO(entityManager);
-    private final EmployeeDAO eDAO = new EmployeeDAO(entityManager);
+
+    private final BookRoomDAO brDAO = new BookRoomDAO();
+    private final EmployeeDAO eDAO = new EmployeeDAO();
 
     public ArrayList<Order> getAlLOrder() {
 

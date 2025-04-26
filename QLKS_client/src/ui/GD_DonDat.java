@@ -42,7 +42,6 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
     private Thread thread = new Thread((Runnable) this);
     private String username;
     RoomClient roomDAO;
-    socket.implement.RoomStatusType roomStatusTypeDAO;
     JButton lblRoom;
     String nameRoom;
     private String idroom;
@@ -63,9 +62,7 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
     public GD_DonDat(String user) {
         username=user;
         thread.start();
-        roomDAO=new RoomClient();
-        roomStatusTypeDAO =new socket.implement.RoomStatusType();
-        
+        roomDAO=new RoomClient();        
         this.setRootPaneCheckingEnabled(false);
         javax.swing.plaf.InternalFrameUI ui
                 = this.getUI();
@@ -76,9 +73,6 @@ public class GD_DonDat extends javax.swing.JInternalFrame implements Runnable{
         this.setFocusable(true);
         
         createRoom();
-        
-        
-        
     }
 
     @SuppressWarnings("unchecked")

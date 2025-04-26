@@ -1,10 +1,5 @@
 package ui;
 
-import dao.BookRoomDAO;
-import dao.CustomerDAO;
-import dao.OrderDAO;
-import dao.ServiceDAO;
-import dao.ServiceDetailDAO;
 import entity.Order;
 import entity.OrderDetail;
 import entity.Room;
@@ -22,14 +17,18 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import org.jfree.ui.tabbedui.DetailEditor;
 
+import dao.BookRoomDAO;
+import dao.CustomerDAO;
+import dao.OrderDAO;
+import dao.ServiceDAO;
+import dao.ServiceDetailDAO;
+
 public class GD_DichVu_NhanVien extends javax.swing.JInternalFrame {
     private DefaultTableModel dtmPhong,dtmDichVu,dtmChiTietDichVu;
     private final OrderDAO oDAO=new OrderDAO();
     private ArrayList<Order> listOrders;
     private ArrayList<Service> listServices;
     private ArrayList<ServiceDetail> listServiceDetails;
-    private final BookRoomDAO  brDAO=new BookRoomDAO();
-    private final CustomerDAO cDAO=new CustomerDAO();
     private final ServiceDAO sDAO=new ServiceDAO();
     private final ServiceDetailDAO sdDAO=new ServiceDetailDAO();
     

@@ -458,7 +458,6 @@ private void doiMauPnl(){
         pnlDonDat.setkEndColor(new java.awt.Color(185,237,221));
         pnlDonDat.setkStartColor(new java.awt.Color(185,237,221));
         lblDonDat.setForeground(new Color(36,89,83)); 
-        System.out.println("Don dat2");
         
         GD_DonDat gdDonDat=new GD_DonDat(username);
         openComponent(gdDonDat);
